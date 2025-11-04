@@ -67,3 +67,4 @@ The project follows a TypeScript-first monorepo structure to keep mobile, web, a
 3. Provision base CI workflow and environment scaffolding (dotenv templates, lint-staged, Husky).
 4. Bootstrap frontend workspace once design system decisions are finalized.
 
+
