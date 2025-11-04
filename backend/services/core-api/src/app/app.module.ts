@@ -16,10 +16,11 @@ import { HealthModule } from './health/health.module';
     SupabaseModule,
     UsersModule,
     WalletsModule,
-    TransactionsModule,
-    AuthModule,
+    TransactionsModule,\r\n    PricingModule,\r\n    AuthModule,
     HealthModule,
   ],
 })
 export class AppModule {}
+
+
 
