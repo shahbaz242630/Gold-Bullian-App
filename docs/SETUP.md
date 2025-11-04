@@ -22,7 +22,12 @@
    ```bash
    cp backend/services/core-api/.env.example backend/services/core-api/.env
    ```
-   Fill in secrets from Supabase (service role key, database URL, cookie secret).
+   Populate the `.env` file with values from Supabase:
+   - `DATABASE_URL`: Settings → Database → Connection string (Node.js).
+   - `SUPABASE_URL`: Project URL, e.g. `https://your-project-ref.supabase.co`.
+   - `SUPABASE_SERVICE_ROLE_KEY`: Service role secret (keep private).
+   - `COOKIE_SECRET`: Generate a long random string (32+ chars).
+   > **Security:** never commit the filled `.env` file. Rotate keys immediately if they are accidentally exposed.
 4. Run Prisma migrations:
    ```bash
    npm run migrate --workspace=@bulliun/core-api
@@ -31,7 +36,15 @@
    ```bash
    npm run start:dev --workspace=@bulliun/core-api
    ```
-6. Launch the Expo app:
+6. Frontend environment:
+   ```bash
+   cp frontend/apps/consumer/.env.example frontend/apps/consumer/.env
+   ```
+   Set the public values:
+   - `EXPO_PUBLIC_SUPABASE_URL`
+   - `EXPO_PUBLIC_SUPABASE_ANON_KEY`
+
+7. Launch the Expo app:
    ```bash
    cd frontend/apps/consumer
    npm install

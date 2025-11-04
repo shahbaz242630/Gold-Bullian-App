@@ -11,6 +11,7 @@ const envSchema = z.object({
     .optional()
     .transform((value) => value?.split(',').map((origin) => origin.trim())),
   DATABASE_URL: z.string().url('DATABASE_URL must be a valid Supabase Postgres URL'),
+  SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid Supabase project URL'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
 });
 

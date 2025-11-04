@@ -12,7 +12,13 @@ package-lock.json
 # Env files
 .env
 .env.*
+**/.env
+**/.env.*
 !.env.example
+!**/.env.example
+*.env.local
+*.env.development
+*.env.production
 
 # Logs
 logs/
@@ -40,4 +46,3 @@ reports/
 
 # Prisma
 backend/prisma/.env
-

@@ -43,6 +43,7 @@ PORT=3000
 HOST=0.0.0.0
 COOKIE_SECRET=replace-with-long-random-string
 DATABASE_URL=postgresql://...
+SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=...
 CORS_ORIGINS=http://localhost:3000,http://localhost:19006
 ```
@@ -58,7 +59,15 @@ npm run migrate
 ```bash
 cd frontend/apps/consumer
 npm install
+cp .env.example .env
 npm run start
+```
+
+Set the Expo environment variables:
+
+```
+EXPO_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=public-anon-key
 ```
 
 This launches Expo for development across iOS, Android, and web.
