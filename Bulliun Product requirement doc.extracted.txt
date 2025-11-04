@@ -1,0 +1,145 @@
+Bulli un 
+ 
+ 
+Product overview:  
+ 
+ 
+ 
+MVP Scope:  
+ 
+1. Gold Pricing (App & Admin Portal)  
+a. API integration  
+b. Manual via Admin portal [parameters]  
+ 
+2. Gold Products  (on App)  
+a. Pay by value  
+b. Gold Kitty  
+c. Monthly recurring  
+d. Kids special  
+3. B2C  
+a. Sign-up 
+b. KYC 
+c. Buy Gold  
+d. Sell Gold – against cash  
+e. Withdraw gold coin(s)  
+4. Customer Acquisition  
+a. Loyalty for customer acquisition [ Complete KYC, buy X value of Gold and get Xgms of 
+Gold free ] 
+b. Referrals  (get Xgms of Gold free)  
+
+5. B2B2C  
+a. Corporate onboarding  
+b. White -label APIs  
+c. Dashboards  
+ 
+6. Admin  
+a. General  
+i. Gold Pricing management  
+ii. Customer segmentation (TBD)  
+b. B2C 
+i. Onboarding -KYC Data  
+1. EID expiry  
+ii. Fee management  
+iii. VAT management  
+iv. Customer profiling  
+v. Complaints management/resolution  
+vi. Reports  
+c. B2B 
+i. Onboarding  
+ii. Corporate Pricing/revenue management  
+iii. Dashboards  
+iv. Reports  
+ 
+ 
+ 
+1. Registration  – Sign -up/Sign -in: 
+Users need to download and install the app. They'll then need to register by providing their 
+basic information and creating an account.   
+ 
+2. Verification  – Sign -up/Sign -in:  
+To ensure security and compliance, users might need to verify their identity by submitting 
+relevant documents.  Post account creation, KYC to be performed for the customer to continue.  
+ 
+Digitify : to share KYC tool they will be integrating with, along with the process.  
+Wadzpay:  Post successful verification and account creation, an instance of customer account to 
+be created at WadzPay. [process to be confirmed during WadzPay workshop]   
+ 
+3. Nominee :  
+User have to add at least one nominee to his account.  
+ 
+4. Funding:  
+Users can either pay using the payment gatewa y by entering their card details or link their bank 
+accounts or credit/debit cards to the app. This enables them to deposit funds that will be us ed 
+to purchase fractional gold.   
+In case of B2B2C: in  addition to  payment gateway we will be  also allowing onus transactions 
+where direct debit on the card will happen and no network/payment gateway will be required. 
+This process would require separate discussion with partners for process, reconciliation etc. [to 
+be added post discussion]  
+ 
+5. Exploring Gold Products :  
+Users can browse through different gold products  available for purchase. These could include 
+various weights and types of gold.   
+ 
+Product Option1 : Flexi Gold - One time buy  or as and when buy  
+Buy Gold in fractions or to a amount user can pay. But it has to be in the multiples of 10. 
+For eg.: 0.1 gm, 0.5 gm, 1.0gm, 10gm, 0.2gm  but NOT 0.11gm, 0.21 etc.  
+We need to still evaluate posibility  when user enter amount which will equate it to a 
+value that is not multiple of 10.   
+ 
+Product  Option2:  Group buy product [Digital Gold Kitty]  
+One user can create a group and add registered users to it and define the amount of 
+Gold they will have each month and app will calculate the value that will pool in every 
+month  by each user . Individual users will add that amount same date each month. And 
+on that date group admin will select which user will get Gold value for that month.  
+  
+ Product Option3:  Monthly recurring individual  – Goal based  
+User can opt for a goal based gold saving product, and link his/her card for auto debit  at 
+certain  date/time of a month.   
+ 
+ Product Option4:  Kids special  
+User can opt for a goal based gold saving product  for more than one kid , and link his/her 
+card for auto debit at certa in date/time of a month.  Each kid product will have 
+following:  
+- Details of the kid  
+- Documents for verification for eg. Passport  etc. 
+Each kid will be the nominee for their own gold product in case of eventuality.  
+ 
+6. Selecting Fractional Amount:  
+Users choose the amount of gold they want to purchase. The app should display the equivalent 
+value in their chosen currency.  
+App will be displaying real time gold rates for buy & sell on the app.  
+ 
+7. Payment:  
+Users confirm the purchase and the app deducts the corresponding funds from their linked 
+account or card.  
+ 
+8. Fractional Ownership:  
+After the purchase, users now own a fraction  of the gold equivalent to the amount they bought.  
+ 
+ 
+ 
+ 
+9. Security and Storage:  
+Assure users of the security of their investments and the physical storage of the gold, if 
+applicable.  App will display certificates and authorities which has approved or provided services 
+to Bulliun. All details pertaining to these will be displayed as separate section.  
+ 
+10. Real -time Tracking:  
+The app provides real -time updates on the value of the user's go ld holdings, allowing them to 
+monitor their investment.  
+ 
+11. Selling or Holding:  
+Users can choose to either hold onto their gold or sell it back through the app. Selling would 
+convert their fractional gold back into funds in their account.  If users decide to sell, they can 
+withdraw the funds to their linked bank account.  
+ 
+12. Withdrawal:  
+Users can choose to either hold onto their gold or withdraw it in form of gold coins in the form 
+of available denomination from our authorized partners.  
+[supply chain model for this to be define]  
+ 
+13. Customer Support:  
+Provide customer support to address any questions or issues users might encounter during the 
+process.  We need to have Admin portal for customer service, Operations, Finance  and 
+compliance.  
+ 

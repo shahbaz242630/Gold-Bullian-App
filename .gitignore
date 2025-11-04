@@ -1,0 +1,43 @@
+# Node / workspace artifacts
+node_modules/
+package-lock.json
+
+# Turbo / build caches
+.turbo/
+.nx/
+
+# TypeScript
+*.tsbuildinfo
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDEs and OS
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Coverage / reports
+coverage/
+reports/
+
+# Expo / React Native
+.expo/
+.expo-shared/
+
+# Prisma
+backend/prisma/.env
+

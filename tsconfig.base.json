@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@bulliun/config/*": ["packages/config/src/*"],
+      "@bulliun/types/*": ["packages/types/src/*"],
+      "@bulliun/tooling/*": ["packages/tooling/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "build"]
+}

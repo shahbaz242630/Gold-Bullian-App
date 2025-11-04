@@ -1,0 +1,130 @@
+Bulliun Digital Gold Platform – Tech Stack and Phase‑Wise Blueprint (2025)
+Goal of the project
+
+Bulliun is a regulated fintech that allows individuals and partners in the Middle East to save and transact in fractional gold instead of cash. It requires three tightly coupled applications: a B2C consumer app, a B2B/partner portal and an internal admin portal. Users must complete KYC, buy/sell/withdraw gold, track holdings, invite others to savings groups and convert holdings into physical coins. Partners (banks, payroll cards, exchange houses) need white‑label APIs and dashboards for corporate KYB, pricing and revenue share. The admin portal must handle operations, finance, compliance and customer support.
+
+Because the product must run on web, Android and iOS, a cross‑platform stack is essential to minimise cost and accelerate development. Cross‑platform development has matured by 2025—frameworks like Flutter, React Native and Kotlin Multiplatform provide native‑like performance and shared codebases
+movadex.com
+. Using a single team and shared code reduces duplicated work and speeds up releases
+movadex.com
+.
+
+Recommended Tech Stack
+Cross‑platform frameworks
+Framework	Reasoning (Pros/Cons)	When to use
+React Native (with Expo)	React Native lets developers reuse up to 80 % of the codebase across Android and iOS, provides hot reload and ready‑to‑use UI elements.
+
+
+Recommendation: For Bulliun’s mobile and web requirements, React Native with Expo is the most pragmatic choice. It allows code sharing with the web via React/Next.js, has improved performance and hot reload, and leverages the team’s existing design. 
+
+Web application framework
+
+Next.js (React) – A framework for server‑side rendering and static-site generation using React. It allows component reuse across mobile/web, offers built‑in routing, API routes and good SEO for landing pages. With React Native Web and Expo Router, many components can be shared between the mobile app and web app. Using TypeScript ensures type safety.
+
+Tailwind CSS and component library – Use Tailwind for utility‑based styling and a custom component library built on shadcn/ui or Chakra UI for consistent UI across mobile and web. This reduces design drift and speeds development.
+
+Backend
+
+Because the app needs to process real‑time gold prices, handle high concurrency, integrate with external payment and KYC services, and serve multiple clients (mobile, web, partner dashboards), a scalable backend is critical.
+
+Layer	Recommended Technology	Rationale
+API layer	Node.js with NestJS (TypeScript) or Express.js	Node.js allows the same language (TypeScript) across frontend and backend, simplifying hiring and code sharing. NestJS provides a structured, modular architecture with decorators, dependency injection, built‑in validation, and support for GraphQL/REST. Express.js is simpler but requires more boilerplate. Both are widely adopted and have large ecosystems.
+Real‑time updates	Socket.io (for Node) or GraphQL subscriptions	For live gold price streaming and notifications. Node’s event‑driven nature pairs well with WebSockets.
+Database	PostgreSQL (hosted on AWS RDS/Aurora or via Supabase)	A proven relational database suitable for financial transactions; supports ACID compliance and strong consistency. Supabase offers managed Postgres with real‑time subscriptions and user authentication.
+ORM/Query layer	Prisma or TypeORM	Provides type‑safe database queries in TypeScript, schema migrations and relations.
+Authentication & access	JWT for user sessions; integrate with KYC provider (Digitify) and OAuth for partner logins. Use role‑based access control to distinguish consumers, partners and admins.	
+Payment & wallet	Integrate with WadzPay or equivalent payment gateway, plus local bank/payment APIs. Use a modular provider pattern so other gateways can be added later.	
+Cloud infrastructure	Host via AWS (ECS, Fargate, or Kubernetes on EKS) or GCP. Use Docker containers to package services. Set up CI/CD pipelines using GitHub Actions, EAS (Expo Application Services) for mobile, and Vercel or CloudFront for web.	
+Storage	Use AWS S3 or Supabase Storage for KYC documents, profile images and audit logs.	
+Monitoring & analytics	Use Firebase Analytics and Mixpanel for user behaviour analysis, and Sentry or Datadog for error tracking. Movadex recommends integrating analytics and feedback early
+movadex.com
+.	
+Security	Use HTTPS everywhere, encrypt sensitive data at rest, implement 2FA for admins, and run penetration testing. Keep up‑to‑date with regulatory requirements (AML, GDPR, UAE Central Bank).	
+Monorepo and shared code
+
+Using a monorepo (Nx or Turborepo) allows mobile, web and backend projects to live in a single repository with shared packages. Shared packages would include:
+
+UI library – cross‑platform components using React Native for mobile and React Native Web for web.
+
+Types & interfaces – shared TypeScript types for API requests/responses and database models.
+
+Utils – common utilities (validation, formatting, currency conversions).
+
+Services – wrappers for API calls to payment gateways, gold price feed, KYC provider.
+
+This approach ensures consistency across platforms and reduces duplication.
+
+Phase‑wise Build Plan
+Phase 1 – Core MVP 
+
+Focus: deliver B2C app (mobile + web) and minimal admin backend.
+
+Project setup – monorepo with packages for mobile (React Native with Expo), web (Next.js), backend (NestJS), and shared packages. Set up CI/CD.
+
+Authentication & KYC – implement sign‑up/login with email or phone. Integrate Digitify KYC and store user documents securely. Add nominee details to comply with regulations (from PRD). Ensure KYC status gating (No KYC flow vs. Verified flow) as in Figma.
+
+Wallet & live gold pricing – integrate a gold price feed to display buy/sell rates (admin can override). Create user wallets storing fractional gold units. Use WebSockets to push real‑time price updates to mobile/web.
+
+Buy / Sell / Withdraw flows – implement purchase of gold using card/bank transfer; store transaction history. Implement selling gold for cash and withdrawal to user’s bank. Include physical gold withdrawal by generating redemption codes or linking to approved partners. Validate purchase amounts per allowed denominations as in PRD. Use React Native UI flows from Figma (dashboard, buy, sell, withdraw).
+
+Nominee & profile management – allow users to set and edit nominee details, upload documents, and manage personal information.
+
+Admin portal (Minimal) – create a web dashboard (Next.js) for operations: view users/KYC status, set gold price overrides, manage fees/VAT, view transactions and issue refunds. Use role-based access (e.g., finance vs. customer service).
+
+Compliance & security – implement audit logs, encryption, and ensure data residency per UAE regulations. Integrate with local regulators (DMCC, SIRA) for periodic reporting.
+
+Phase 2 – Savings Products & Growth (4–6 months)
+
+Recurring saving plans – implement monthly auto‑debit goals (wedding fund, education). Users specify goal amount and date; the system schedules recurring purchases. Provide progress tracking UI.
+
+Kids sub‑wallets – allow parents to create sub‑accounts for each child with separate KYC and nominee details. Provide dashboards for each child and unified family view.
+
+Gold Kitty (Group saving) – build group savings feature (rotating pot). Implement group creation, member invitations, monthly contributions, pot allocation and notifications. Use a smart contract or backend scheduling job to allocate the pot.
+
+Referral & rewards – implement referral codes and promotional bonuses (grams of gold). Build a promo engine configurable via admin portal.
+
+Physical coin withdrawal UI – add screens to select coin size, partner jeweller, delivery or pick‑up, and track status. Integrate with vault/jeweller APIs.
+
+Enhanced admin portal – add dashboards for savings plans, referral programs, dispute management and segmentation. Provide export to CSV/PDF.
+
+Analytics & user feedback – integrate Mixpanel/Firebase analytics and Instabug for in‑app feedback
+movadex.com
+.
+
+Phase 3 – B2B2C & White‑Label API 
+
+Corporate onboarding (KYB) – build flows for partners to register, upload business documents, and sign agreements. Use a dedicated admin module to review and approve partners.
+
+Partner dashboards – create dashboards for exchange houses, payroll card issuers and banks showing customer engagement, transaction volumes and revenue share. Partners can configure pricing and promotions.
+
+API/SDK package – expose Bulliun functionality via REST/GraphQL API or SDK so partners can integrate gold saving into their own apps. Use OAuth for authentication and implement rate limiting and monitoring.
+
+Group kitty and cross‑border features – expand group kitty to include cross‑border remittances. Add currency conversion and integrate with remittance providers.
+
+White‑label app – allow partners to host a branded version of the consumer app using configuration files and theming.
+
+Scalability & optimisation – break monolith into microservices if needed; migrate to Kubernetes; implement caching (Redis), queueing (RabbitMQ/SQS) and sharding for high throughput.
+
+Considerations and Best Practices
+
+Design with platform conventions – cross‑platform apps must respect platform UI norms. Movadex notes that good design adapts navigation and gestures for Android and iOS rather than enforcing identical layouts
+movadex.com
+.
+
+Performance testing – monitor load times, memory and animations on real devices and use tools like Firebase Performance Monitoring and Flipper
+movadex.com
+.
+
+Modular architecture – separate business logic from UI and create reusable modules
+movadex.com
+. This simplifies scaling and testing.
+
+Not always cross‑platform – if future modules require intensive graphics, 3D, real‑time audio/video or deep hardware integration, a native module or full native code may be necessary
+movadex.com
+.
+
+Conclusion
+
+By leveraging React Native with Next.js and a Node.js/NestJS backend, the Bulliun team can build a unified codebase that runs across Android, iOS and web while meeting regulatory requirements and delivering a high‑quality user experience. Cross‑platform development is no longer a compromise; in 2025 it offers a competitive edge for startups
+movadex.com
+. A phased approach ensures that critical functionality (KYC, gold transactions, minimal admin) is delivered early, while more complex features (savings plans, group kitty, corporate APIs) are added as the platform matures.
