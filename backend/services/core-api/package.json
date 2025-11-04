@@ -17,6 +17,9 @@
     "migrate": "prisma migrate deploy",
     "generate": "prisma generate"
   },
+  "prisma": {
+    "schema": "../../prisma/schema.prisma"
+  },
   "dependencies": {
     "@fastify/helmet": "^11.1.1",
     "@fastify/cookie": "^9.3.1",

@@ -40,6 +40,11 @@ The project follows a TypeScript-first monorepo structure to keep mobile, web, a
 - **Auth & Security:** JWT access tokens, refresh rotation, RBAC per tenant, and auditing middleware. Secrets sourced from environment variables, validated with Zod schemas.
 - **API Style:** REST for mobile/web clients, GraphQL or tRPC for partner SDKs as future extensions. OpenAPI is generated continuously for client SDK generation.
 - **Testing:** Jest/Testing Library for unit/integration tests, Pact for contract testing, supertest for e2e of API modules.
+- **Core modules (current):**
+  - `DatabaseModule` wraps Prisma client for dependency injection & lifecycle hooks.
+  - `SupabaseModule` centralises the service-role Supabase client.
+  - `UsersModule` encapsulates user persistence and default wallet provisioning.
+  - `AuthModule` orchestrates registration/login flows via Supabase and Prisma.
 
 ## Frontend Foundations
 

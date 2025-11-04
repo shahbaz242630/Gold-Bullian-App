@@ -32,11 +32,15 @@
    ```bash
    npm run migrate --workspace=@bulliun/core-api
    ```
-5. Start the backend API:
+5. Generate Prisma client (after any schema change):
+   ```bash
+   npm run generate --workspace=@bulliun/core-api
+   ```
+6. Start the backend API:
    ```bash
    npm run start:dev --workspace=@bulliun/core-api
    ```
-6. Frontend environment:
+7. Frontend environment:
    ```bash
    cp frontend/apps/consumer/.env.example frontend/apps/consumer/.env
    ```
@@ -44,7 +48,7 @@
    - `EXPO_PUBLIC_SUPABASE_URL`
    - `EXPO_PUBLIC_SUPABASE_ANON_KEY`
 
-7. Launch the Expo app:
+8. Launch the Expo app:
    ```bash
    cd frontend/apps/consumer
    npm install

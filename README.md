@@ -32,6 +32,7 @@ npm run prepare
 
 ```bash
 cd backend/services/core-api
+npm run generate
 npm run start:dev
 ```
 
@@ -77,8 +78,17 @@ This launches Expo for development across iOS, Android, and web.
 - `turbo run lint` - lint all packages
 - `turbo run test` - run Vitest suites
 - `turbo run build` - compile packages and services
+- `npx turbo run test --filter=@bulliun/core-api` - run backend tests only
 
 GitHub Actions (`.github/workflows/ci.yml`) mirrors the local flow for pull requests.
+
+### API Surface (MVP bootstrap)
+
+- `POST /api/health` - service heartbeat.
+- `POST /api/auth/register` - email/password registration (Supabase + Prisma record, returns session tokens).
+- `POST /api/auth/login` - login via Supabase password auth; rehydrates local user record as needed.
+
+The API currently emits JSON payloads following the DTOs under `src/modules/auth/dto`.
 
 ## Next Steps
 

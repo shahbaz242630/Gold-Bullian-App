@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
@@ -10,6 +10,7 @@ import rateLimit from '@fastify/rate-limit';
 
 import { AppModule } from './app/app.module';
 import { ConfigService } from './config/config.service';
+import { PrismaService } from './database/prisma.service';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -39,6 +40,17 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('api');
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
+
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app);
 
   await app.listen({ port, host });
   logger.log(`Core API running on http://${host}:${port}`);
