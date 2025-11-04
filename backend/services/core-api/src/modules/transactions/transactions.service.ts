@@ -1,10 +1,15 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, TransactionStatus, TransactionType } from '@prisma/client';
+import { Prisma, TransactionStatus, TransactionType, WalletType } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 
 import { PrismaService } from '../../database/prisma.service';
+import { PricingService } from '../pricing/pricing.service';
 import { WalletEntity } from '../wallets/entities/wallet.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
+import { BuyGoldDto } from './dto/buy-gold.dto';
+import { SellGoldDto } from './dto/sell-gold.dto';
+import { WithdrawCashDto } from './dto/withdraw-cash.dto';
+import { WithdrawPhysicalDto } from './dto/withdraw-physical.dto';
 import { TransactionEntity } from './entities/transaction.entity';
 
 interface RecordTransactionResult {
@@ -14,7 +19,10 @@ interface RecordTransactionResult {
 
 @Injectable()
 export class TransactionsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly pricingService: PricingService,
+  ) {}
 
   async listByUser(userId: string, limit = 50, cursor?: string) {
     const items = await this.prisma.transaction.findMany({
@@ -76,6 +84,99 @@ export class TransactionsService {
     });
   }
 
+  async buyGold(dto: BuyGoldDto) {
+    const quote = await this.pricingService.getEffectiveQuote();
+    if (dto.goldGrams === undefined && dto.fiatAmount === undefined) {
+      throw new BadRequestException('Either goldGrams or fiatAmount must be provided for buy transactions.');
+    }
+
+    const pricePerGram = new Prisma.Decimal(quote.buyPrice);
+    const feeAmount = new Prisma.Decimal(dto.feeAmount ?? 0);
+
+    const hasGrams = dto.goldGrams !== undefined;
+    const goldGramsDecimal = hasGrams
+      ? new Prisma.Decimal(dto.goldGrams!)
+      : new Prisma.Decimal(dto.fiatAmount).div(pricePerGram);
+    const fiatAmountDecimal = hasGrams
+      ? goldGramsDecimal.mul(pricePerGram)
+      : new Prisma.Decimal(dto.fiatAmount);
+
+    const result = await this.record({
+      userId: dto.userId,
+      walletType: WalletType.GOLD,
+      type: TransactionType.BUY,
+      goldGrams: Number(goldGramsDecimal.toFixed(8)),
+      fiatAmount: this.toNumber(fiatAmountDecimal, 2),
+      feeAmount: this.toNumber(feeAmount, 2),
+      fiatCurrency: dto.currency ?? quote.currency,
+      metadata: {
+        priceSource: quote.source,
+        pricePerGram: pricePerGram.toString(),
+      },
+    });
+
+    return result;
+  }
+
+  async sellGold(dto: SellGoldDto) {
+    const quote = await this.pricingService.getEffectiveQuote();
+    const pricePerGram = new Prisma.Decimal(quote.sellPrice);
+
+    const goldGramsDecimal = new Prisma.Decimal(dto.goldGrams);
+    const feeAmountDecimal = new Prisma.Decimal(dto.feeAmount ?? 0);
+    const fiatAmountDecimal = goldGramsDecimal.mul(pricePerGram);
+
+    const result = await this.record({
+      userId: dto.userId,
+      walletType: WalletType.GOLD,
+      type: TransactionType.SELL,
+      goldGrams: Number(goldGramsDecimal.toFixed(8)),
+      fiatAmount: this.toNumber(fiatAmountDecimal, 2),
+      feeAmount: this.toNumber(feeAmountDecimal, 2),
+      fiatCurrency: dto.currency ?? quote.currency,
+      metadata: {
+        priceSource: quote.source,
+        pricePerGram: pricePerGram.toString(),
+      },
+    });
+
+    return result;
+  }
+
+  async withdrawCash(dto: WithdrawCashDto) {
+    const result = await this.record({
+      userId: dto.userId,
+      walletType: WalletType.GOLD,
+      type: TransactionType.WITHDRAW_CASH,
+      goldGrams: dto.goldGrams,
+      fiatAmount: dto.fiatAmount,
+      feeAmount: dto.feeAmount ?? 0,
+      fiatCurrency: dto.currency,
+      metadata: dto.metadata,
+    });
+
+    return result;
+  }
+
+  async withdrawPhysical(dto: WithdrawPhysicalDto) {
+    const result = await this.record({
+      userId: dto.userId,
+      walletType: WalletType.GOLD,
+      type: TransactionType.WITHDRAW_PHYSICAL,
+      goldGrams: dto.goldGrams,
+      fiatAmount: dto.valuationAmount ?? 0,
+      feeAmount: dto.feeAmount ?? 0,
+      fiatCurrency: dto.currency,
+      metadata: {
+        fulfillmentPartner: dto.fulfillmentPartner,
+        denomination: dto.denomination,
+        ...dto.metadata,
+      },
+    });
+
+    return result;
+  }
+
   private getGoldDelta(type: TransactionType, amount: Prisma.Decimal): Prisma.Decimal {
     switch (type) {
       case TransactionType.BUY:
@@ -94,5 +195,9 @@ export class TransactionsService {
   private createReference(type: TransactionType): string {
     const prefix = type.substring(0, 3).toUpperCase();
     return `${prefix}-${randomUUID().split('-')[0]}`;
+  }
+
+  private toNumber(decimal: Prisma.Decimal, precision: number) {
+    return Number(decimal.toFixed(precision));
   }
 }

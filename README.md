@@ -87,8 +87,13 @@ GitHub Actions (`.github/workflows/ci.yml`) mirrors the local flow for pull requ
 - `POST /api/health` - service heartbeat.
 - `POST /api/auth/register` - email/password registration (Supabase + Prisma record, returns session tokens).
 - `POST /api/auth/login` - login via Supabase password auth; rehydrates local user record as needed.
+- `GET /api/transactions?userId=...` - paginated transaction history (most recent first).
+- `POST /api/transactions/buy` - purchase gold using fiat or predefined grams (derives grams from current buy price).
+- `POST /api/transactions/sell` - sell gold back to cash using live sell price.
+- `POST /api/transactions/withdraw/cash` - request cash withdrawal, deducting grams accordingly.
+- `POST /api/transactions/withdraw/physical` - request physical redemption (metadata carries partner fulfilment details).
 
-The API currently emits JSON payloads following the DTOs under `src/modules/auth/dto`.
+The API emits responses based on DTOs under `src/modules/**/dto` and entity transformers in `src/modules/**/entities`.
 
 ## Next Steps
 
