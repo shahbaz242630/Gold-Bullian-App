@@ -82,8 +82,7 @@ This launches Expo for development across iOS, Android, and web.
 
 GitHub Actions (`.github/workflows/ci.yml`) mirrors the local flow for pull requests.
 
-### API Surface (MVP bootstrap)
-
+### API Surface (MVP bootstrap)\n\n> All endpoints (besides `/api/health`) require a Supabase JWT Bearer token; admin-only routes additionally expect `roles` metadata containing `admin`.
 - `POST /api/health` - service heartbeat.
 - `POST /api/auth/register` - email/password registration (Supabase + Prisma record, returns session tokens).
 - `POST /api/auth/login` - login via Supabase password auth; rehydrates local user record as needed.
@@ -106,6 +105,7 @@ The API emits responses based on DTOs under `src/modules/**/dto` and entity tran
 3. Scaffold shared UI libraries in `frontend/packages/`.
 4. Add Supabase migration workflow and seed scripts before seeding initial data.
 5. Connect CI/CD to AWS Fargate or Cloud Run deployments.
+
 
 
 

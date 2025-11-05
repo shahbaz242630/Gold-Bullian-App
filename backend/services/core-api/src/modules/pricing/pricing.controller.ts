@@ -1,11 +1,13 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 
-import { PricingService } from './pricing.service';
+import { SupabaseAuthGuard } from '../auth/guards/supabase-auth.guard';
 import { PriceQuoteDto } from './dto/price-quote.dto';
 import { PriceSnapshotDto } from './dto/responses/price-snapshot.dto';
+import { PricingService } from './pricing.service';
 
 @Controller('pricing')
+@UseGuards(SupabaseAuthGuard)
 export class PricingController {
   constructor(private readonly pricingService: PricingService) {}
 
@@ -20,12 +22,15 @@ export class PricingController {
     const parsedLimit = Number(limit) || 50;
     const snapshots = await this.pricingService.listSnapshots(parsedLimit);
     return snapshots.map((snapshot) =>
-      plainToInstance(PriceSnapshotDto, {
-        ...snapshot,
-        buyPrice: snapshot.buyPrice.toString(),
-        sellPrice: snapshot.sellPrice.toString(),
-      }, { excludeExtraneousValues: true }),
+      plainToInstance(
+        PriceSnapshotDto,
+        {
+          ...snapshot,
+          buyPrice: snapshot.buyPrice.toString(),
+          sellPrice: snapshot.sellPrice.toString(),
+        },
+        { excludeExtraneousValues: true },
+      ),
     );
   }
 }
-
