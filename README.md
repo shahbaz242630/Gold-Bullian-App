@@ -92,13 +92,18 @@ GitHub Actions (`.github/workflows/ci.yml`) mirrors the local flow for pull requ
 - `POST /api/transactions/sell` - sell gold back to cash using live sell price.
 - `POST /api/transactions/withdraw/cash` - request cash withdrawal, deducting grams accordingly.
 - `POST /api/transactions/withdraw/physical` - request physical redemption (metadata carries partner fulfilment details).
+- `GET /api/wallets/:userId` - aggregated wallet balances for the user (includes locked grams).
+- `GET /api/wallets/:userId/:type` - fetch a specific wallet (e.g., `GOLD`, `FEE`).
+- `GET /api/pricing/current` - latest buy/sell quote with override metadata.
+- `GET /api/pricing/snapshots?limit=N` - historical snapshots ordered by `effectiveAt`.
 
 The API emits responses based on DTOs under `src/modules/**/dto` and entity transformers in `src/modules/**/entities`.
 
 ## Next Steps
 
-1. Flesh out domain modules in the core API (auth, wallets, pricing, KYC).
-2. Scaffold shared UI libraries in `frontend/packages/`.
-3. Add Supabase migration workflow and seed scripts.
-4. Connect CI/CD to AWS Fargate or Cloud Run deployments.
+1. Build KYC submission + admin review flows (Digitify integration, nominee management).
+2. Add authentication/authorization guards to the new REST endpoints.
+3. Scaffold shared UI libraries in `frontend/packages/`.
+4. Add Supabase migration workflow and seed scripts before seeding initial data.
+5. Connect CI/CD to AWS Fargate or Cloud Run deployments.
 

@@ -8,13 +8,22 @@ import { WalletEntity } from './entities/wallet.entity';
 export class WalletsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findAllForUser(userId: string) {
+    const wallets = await this.prisma.wallet.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return wallets.map(WalletEntity.fromModel);
+  }
+
   async findByUserAndType(userId: string, type: WalletType): Promise<WalletEntity> {
     const wallet = await this.prisma.wallet.findUnique({
       where: { userId_type: { userId, type } },
     });
 
     if (!wallet) {
-      throw new NotFoundException(Wallet  not found for user );
+      throw new NotFoundException(`Wallet ${type} not found for user ${userId}`);
     }
 
     return WalletEntity.fromModel(wallet);
@@ -47,4 +56,3 @@ export class WalletsService {
     return WalletEntity.fromModel(wallet);
   }
 }
-
