@@ -1,53 +1,54 @@
 {
-  "name": "gold-bulliun-platform",
-  "version": "0.1.0",
-  "private": true,
-  "description": "Monorepo for the Bulliun digital gold saving platform.",
-  "keywords": [
-    "bulliun",
-    "digital-gold",
-    "fintech"
-  ],
-  "license": "UNLICENSED",
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint",
-    "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
-    "clean": "turbo run clean && rimraf node_modules",
-    "prepare": "husky install"
-  },
-  "workspaces": [
-    "backend/services/*",
-    "backend/libs/*",
-    "frontend/apps/*",
-    "frontend/packages/*",
-    "packages/*"
-  ],
-  "devDependencies": {
-    "@commitlint/cli": "^19.5.0",
-    "@commitlint/config-conventional": "^19.5.0",
-    "@types/node": "^20.14.9",
-    "dotenv-cli": "^7.4.2",
-    "eslint": "^8.57.1",
-    "husky": "^9.1.4",
-    "lint-staged": "^15.2.7",
-    "prettier": "^3.3.3",
-    "rimraf": "^5.0.9",
-    "turbo": "^2.0.10",
-    "typescript": "^5.5.4"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --max-warnings=0"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
-  },
-  "packageManager": "npm@10.8.2",
-  "engines": {
-    "node": ">=20.10.0"
-  }
+    "name":  "gold-bulliun-platform",
+    "version":  "0.1.0",
+    "private":  true,
+    "description":  "Monorepo for the Bulliun digital gold saving platform.",
+    "keywords":  [
+                     "bulliun",
+                     "digital-gold",
+                     "fintech"
+                 ],
+    "license":  "UNLICENSED",
+    "scripts":  {
+                    "build":  "turbo run build",
+                    "dev":  "turbo run dev --parallel",
+                    "lint":  "turbo run lint",
+                    "test":  "turbo run test",
+                    "format":  "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+                    "clean":  "turbo run clean \u0026\u0026 rimraf node_modules",
+                    "prepare":  "husky install",
+                    "smoke":  "npm run smoke --workspace=@bulliun/core-api"
+                },
+    "workspaces":  [
+                       "backend/services/*",
+                       "backend/libs/*",
+                       "frontend/apps/*",
+                       "frontend/packages/*",
+                       "packages/*"
+                   ],
+    "devDependencies":  {
+                            "@commitlint/cli":  "^19.5.0",
+                            "@commitlint/config-conventional":  "^19.5.0",
+                            "@types/node":  "^20.14.9",
+                            "dotenv-cli":  "^7.4.2",
+                            "eslint":  "^8.57.1",
+                            "husky":  "^9.1.4",
+                            "lint-staged":  "^15.2.7",
+                            "prettier":  "^3.3.3",
+                            "rimraf":  "^5.0.9",
+                            "turbo":  "^2.0.10",
+                            "typescript":  "^5.5.4"
+                        },
+    "lint-staged":  {
+                        "*.{ts,tsx,js,jsx}":  [
+                                                  "eslint --max-warnings=0"
+                                              ],
+                        "*.{json,md,yml,yaml}":  [
+                                                     "prettier --write"
+                                                 ]
+                    },
+    "packageManager":  "npm@10.8.2",
+    "engines":  {
+                    "node":  "\u003e=20.10.0"
+                }
 }
