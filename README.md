@@ -107,3 +107,5 @@ The API emits responses based on DTOs under `src/modules/**/dto` and entity tran
 4. Add Supabase migration workflow and seed scripts before seeding initial data.
 5. Connect CI/CD to AWS Fargate or Cloud Run deployments.
 
+
+
