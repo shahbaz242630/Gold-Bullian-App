@@ -14,9 +14,14 @@
         "lint": "eslint \"src/**/*.ts\"",
         "test": "vitest --run",
         "test:watch": "vitest",
+        "test:cov": "vitest --run --coverage",
+        "test:smoke": "vitest --run test/smoke/",
+        "test:integration": "vitest --run test/integration/",
+        "test:api": "vitest --run test/api/",
+        "test:all": "vitest --run test/",
         "migrate": "prisma migrate deploy",
         "generate": "prisma generate",
-        "smoke": "vitest --run test/smoke/app.smoke.spec.ts"
+        "smoke": "npm run test:smoke"
     },
     "prisma": {
         "schema": "../../prisma/schema.prisma"
