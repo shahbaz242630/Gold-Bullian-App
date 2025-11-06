@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import request from 'supertest';
 import { AppModule } from '../../src/app/app.module';
+import { PrismaService } from '../../src/database/prisma.service';
 
 /**
  * Smoke Tests
@@ -9,9 +10,20 @@ import { AppModule } from '../../src/app/app.module';
  * These are basic smoke tests to verify the application starts and critical endpoints exist.
  * They are designed to run quickly and catch major integration issues.
  *
- * Note: These tests require proper environment configuration (database, Supabase, etc.)
- * For isolated unit testing, see individual module test files.
+ * Note: Database connections are mocked to allow tests to run without external dependencies.
+ * For full integration testing with real database, use e2e tests.
  */
+
+// Mock PrismaService to avoid database connection
+class MockPrismaService {
+  async $connect() {
+    // Mock connection - do nothing
+  }
+
+  async $disconnect() {
+    // Mock disconnection - do nothing
+  }
+}
 
 describe('API Smoke Tests', () => {
   let app: NestFastifyApplication;
@@ -20,7 +32,10 @@ describe('API Smoke Tests', () => {
     try {
       const moduleFixture: TestingModule = await Test.createTestingModule({
         imports: [AppModule],
-      }).compile();
+      })
+        .overrideProvider(PrismaService)
+        .useClass(MockPrismaService)
+        .compile();
 
       app = moduleFixture.createNestApplication<NestFastifyApplication>(
         new FastifyAdapter(),

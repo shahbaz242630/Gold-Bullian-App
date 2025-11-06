@@ -44,6 +44,7 @@
         "@nestjs/cli": "^10.4.5",
         "@nestjs/schematics": "^10.1.2",
         "@nestjs/testing": "^10.3.10",
+        "@swc/core": "^1.15.0",
         "@types/node": "^20.14.9",
         "@types/supertest": "^6.0.3",
         "@vitest/coverage-v8": "^1.6.0",
@@ -52,6 +53,7 @@
         "tsconfig-paths": "^4.2.0",
         "tslib": "^2.7.0",
         "typescript": "^5.5.4",
+        "unplugin-swc": "^1.5.8",
         "vitest": "^1.6.0"
     }
 }
