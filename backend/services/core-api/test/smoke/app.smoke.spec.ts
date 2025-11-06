@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import request from 'supertest';
 import { WalletType, TransactionType, TransactionStatus, KycStatus } from '@prisma/client';
 import { SupabaseAuthGuard } from '../../src/modules/auth/guards/supabase-auth.guard';
@@ -75,7 +76,7 @@ const transactionResponse = {
 };
 
 describe('API smoke tests', () => {
-  let app: INestApplication;
+  let app: NestFastifyApplication;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -247,8 +248,11 @@ describe('API smoke tests', () => {
       ],
     }).compile();
 
-    app = module.createNestApplication();
+    app = module.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter()
+    );
     await app.init();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
   afterAll(async () => {
