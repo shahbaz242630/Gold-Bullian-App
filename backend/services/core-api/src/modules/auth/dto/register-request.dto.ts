@@ -17,7 +17,7 @@ export class RegisterRequestDto {
   password!: string;
 
   @IsOptional()
-  @IsPhoneNumber('ZZ')
+  @IsPhoneNumber()
   phoneNumber?: string;
 
   @IsOptional()
