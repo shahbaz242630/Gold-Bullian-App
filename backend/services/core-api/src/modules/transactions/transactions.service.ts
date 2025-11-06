@@ -96,10 +96,10 @@ export class TransactionsService {
     const hasGrams = dto.goldGrams !== undefined;
     const goldGramsDecimal = hasGrams
       ? new Prisma.Decimal(dto.goldGrams!)
-      : new Prisma.Decimal(dto.fiatAmount).div(pricePerGram);
+      : new Prisma.Decimal(dto.fiatAmount!).div(pricePerGram);
     const fiatAmountDecimal = hasGrams
       ? goldGramsDecimal.mul(pricePerGram)
-      : new Prisma.Decimal(dto.fiatAmount);
+      : new Prisma.Decimal(dto.fiatAmount!);
 
     const result = await this.record({
       userId: dto.userId,
