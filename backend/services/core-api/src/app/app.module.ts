@@ -12,6 +12,7 @@ import { UsersModule } from '../modules/users/users.module';
 import { WalletsModule } from '../modules/wallets/wallets.module';
 import { GoldKittyModule } from '../modules/gold-kitty/gold-kitty.module';
 import { RecurringPlansModule } from '../modules/recurring-plans/recurring-plans.module';
+import { KidsWalletsModule } from '../modules/kids-wallets/kids-wallets.module';
 import { PaymentModule } from '../modules/payments/payment.module';
 import { HealthModule } from './health/health.module';
 
@@ -29,6 +30,7 @@ import { HealthModule } from './health/health.module';
     AuthModule,
     GoldKittyModule,
     RecurringPlansModule,
+    KidsWalletsModule,
     PaymentModule,
     HealthModule,
   ],
