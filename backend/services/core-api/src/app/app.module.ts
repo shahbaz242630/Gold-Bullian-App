@@ -11,6 +11,7 @@ import { TransactionsModule } from '../modules/transactions/transactions.module'
 import { UsersModule } from '../modules/users/users.module';
 import { WalletsModule } from '../modules/wallets/wallets.module';
 import { GoldKittyModule } from '../modules/gold-kitty/gold-kitty.module';
+import { RecurringPlansModule } from '../modules/recurring-plans/recurring-plans.module';
 import { PaymentModule } from '../modules/payments/payment.module';
 import { HealthModule } from './health/health.module';
 
@@ -27,6 +28,7 @@ import { HealthModule } from './health/health.module';
     NomineesModule,
     AuthModule,
     GoldKittyModule,
+    RecurringPlansModule,
     PaymentModule,
     HealthModule,
   ],
