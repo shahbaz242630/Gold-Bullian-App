@@ -2,12 +2,14 @@ import { BadRequestException } from '@nestjs/common';
 import { Prisma, TransactionStatus, TransactionType, WalletType } from '@prisma/client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { PrismaService } from '../../database/prisma.service';
-import { PricingService } from '../pricing/pricing.service';
 import { TransactionsService } from './transactions.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { BuyGoldDto } from './dto/buy-gold.dto';
 import { SellGoldDto } from './dto/sell-gold.dto';
+import { BuyGoldService } from './services/buy-gold.service';
+import { SellGoldService } from './services/sell-gold.service';
+import { WithdrawCashService } from './services/withdraw-cash.service';
+import { WithdrawPhysicalService } from './services/withdraw-physical.service';
+import { TransactionsOrchestratorService } from './services/transactions-orchestrator.service';
 
 const buildWallet = () => ({
   id: 'wallet-1',
@@ -38,85 +40,97 @@ const buildTransactionBase = () => ({
 });
 
 describe('TransactionsService', () => {
-  let prisma: PrismaService;
-  let pricingService: PricingService;
+  let orchestrator: TransactionsOrchestratorService;
+  let buyGoldService: BuyGoldService;
+  let sellGoldService: SellGoldService;
+  let withdrawCashService: WithdrawCashService;
+  let withdrawPhysicalService: WithdrawPhysicalService;
   let service: TransactionsService;
   let wallet: ReturnType<typeof buildWallet>;
 
   beforeEach(() => {
     wallet = buildWallet();
 
-    const trx = {
-      wallet: {
-        findUnique: vi.fn().mockResolvedValue(wallet),
-        update: vi.fn().mockImplementation(async ({ data }) => ({
-          ...wallet,
-          balanceGrams: data.balanceGrams ?? wallet.balanceGrams,
-          updatedAt: new Date(),
-        })),
-      },
-      transaction: {
-        create: vi.fn().mockImplementation(async ({ data }) => ({
+    // Mock the orchestrator
+    orchestrator = {
+      listByUser: vi.fn(),
+      record: vi.fn(),
+    } as unknown as TransactionsOrchestratorService;
+
+    // Mock the specialized services with proper mocked responses
+    buyGoldService = {
+      execute: vi.fn().mockResolvedValue({
+        transaction: {
           ...buildTransactionBase(),
-          ...data,
-          id: 'txn-1',
-        })),
-      },
-    };
-
-    prisma = {
-      $transaction: vi.fn((cb: any) => cb(trx)),
-      wallet: trx.wallet,
-      transaction: trx.transaction,
-    } as unknown as PrismaService;
-
-    pricingService = {
-      getEffectiveQuote: vi.fn().mockResolvedValue({
-        source: 'override',
-        buyPrice: '250.5',
-        sellPrice: '249.1',
-        currency: 'AED',
-        effectiveAt: new Date(),
-        isOverride: true,
+          type: TransactionType.BUY,
+          goldGrams: new Prisma.Decimal(0.4),
+        },
+        wallet: {
+          ...wallet,
+          balanceGrams: new Prisma.Decimal(5.4),
+        },
       }),
-    } as unknown as PricingService;
+    } as unknown as BuyGoldService;
 
-    service = new TransactionsService(prisma, pricingService);
+    sellGoldService = {
+      execute: vi.fn().mockResolvedValue({
+        transaction: {
+          ...buildTransactionBase(),
+          type: TransactionType.SELL,
+          goldGrams: new Prisma.Decimal(1.25),
+          fiatAmount: new Prisma.Decimal(306.25),
+        },
+        wallet: {
+          ...wallet,
+          balanceGrams: new Prisma.Decimal(3.75),
+        },
+      }),
+    } as unknown as SellGoldService;
+
+    withdrawCashService = {
+      execute: vi.fn(),
+    } as unknown as WithdrawCashService;
+
+    withdrawPhysicalService = {
+      execute: vi.fn(),
+    } as unknown as WithdrawPhysicalService;
+
+    service = new TransactionsService(
+      orchestrator,
+      buyGoldService,
+      sellGoldService,
+      withdrawCashService,
+      withdrawPhysicalService,
+    );
   });
 
-  it('records a buy transaction and updates balance', async () => {
-    const request: CreateTransactionDto = {
+  it('delegates buy gold to BuyGoldService', async () => {
+    const dto: BuyGoldDto = {
       userId: 'user-1',
-      walletType: WalletType.GOLD,
-      type: TransactionType.BUY,
-      goldGrams: 0.5,
       fiatAmount: 100,
-      feeAmount: 0,
-      fiatCurrency: 'AED',
     };
 
-    const result = await service.record(request);
+    const result = await service.buyGold(dto);
 
+    expect(buyGoldService.execute).toHaveBeenCalledWith(dto);
     expect(result.transaction.type).toBe(TransactionType.BUY);
-    expect(result.wallet.balanceGrams).toBe('5.5');
-    expect((prisma.$transaction as any)).toHaveBeenCalled();
+    expect(Number(result.transaction.goldGrams)).toBe(0.4);
   });
 
-  it('throws when balance would go negative', async () => {
-    const request: CreateTransactionDto = {
+  it('delegates sell gold to SellGoldService', async () => {
+    const dto: SellGoldDto = {
       userId: 'user-1',
-      walletType: WalletType.GOLD,
-      type: TransactionType.SELL,
-      goldGrams: 10,
-      fiatAmount: 100,
-      feeAmount: 0,
-      fiatCurrency: 'AED',
+      goldGrams: 1.25,
     };
 
-    await expect(service.record(request)).rejects.toBeInstanceOf(BadRequestException);
+    const result = await service.sellGold(dto);
+
+    expect(sellGoldService.execute).toHaveBeenCalledWith(dto);
+    expect(result.transaction.type).toBe(TransactionType.SELL);
+    expect(Number(result.transaction.fiatAmount)).toBe(306.25);
   });
 
-  it('computes gold grams from fiat when buying', async () => {
+  it('returns transaction with gold grams when buying', async () => {
     const dto: BuyGoldDto = {
       userId: 'user-1',
       fiatAmount: 100,
@@ -125,20 +139,11 @@ describe('TransactionsService', () => {
     const result = await service.buyGold(dto);
 
     expect(result.transaction.type).toBe(TransactionType.BUY);
-    expect((pricingService.getEffectiveQuote as any)).toHaveBeenCalled();
+    expect(Number(result.transaction.goldGrams)).toBe(0.4);
     expect(Number(result.transaction.goldGrams)).toBeGreaterThan(0);
   });
 
-  it('uses sell price when selling gold', async () => {
-    (pricingService.getEffectiveQuote as any).mockResolvedValue({
-      source: 'market',
-      buyPrice: '250.5',
-      sellPrice: '245.0',
-      currency: 'AED',
-      effectiveAt: new Date(),
-      isOverride: false,
-    });
-
+  it('returns transaction with fiat amount when selling gold', async () => {
     const dto: SellGoldDto = {
       userId: 'user-1',
       goldGrams: 1.25,
@@ -147,10 +152,7 @@ describe('TransactionsService', () => {
     const result = await service.sellGold(dto);
 
     expect(result.transaction.type).toBe(TransactionType.SELL);
+    expect(Number(result.transaction.fiatAmount)).toBe(306.25);
     expect(Number(result.transaction.fiatAmount)).toBeCloseTo(306.25, 2);
   });
 });
-
-
-
-
