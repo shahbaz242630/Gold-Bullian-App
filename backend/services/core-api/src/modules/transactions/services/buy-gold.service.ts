@@ -4,6 +4,7 @@ import { Prisma, WalletType, TransactionType } from '@prisma/client';
 import { PricingService } from '../../pricing/pricing.service';
 import { BuyGoldDto } from '../dto/buy-gold.dto';
 import { TransactionsOrchestratorService, RecordTransactionResult } from './transactions-orchestrator.service';
+import { GoldValidationUtil } from '../../../common/utils/gold-validation.util';
 
 @Injectable()
 export class BuyGoldService {
@@ -23,9 +24,30 @@ export class BuyGoldService {
     const feeAmount = new Prisma.Decimal(dto.feeAmount ?? 0);
 
     const hasGrams = dto.goldGrams !== undefined;
-    const goldGramsDecimal = hasGrams
-      ? new Prisma.Decimal(dto.goldGrams!)
-      : new Prisma.Decimal(dto.fiatAmount!).div(pricePerGram);
+
+    // Calculate gold grams
+    let goldGramsValue: number;
+    if (hasGrams) {
+      goldGramsValue = dto.goldGrams!;
+    } else {
+      // Calculate from fiat amount, then round to valid 0.1g multiple
+      goldGramsValue = GoldValidationUtil.calculateValidGramsFromFiat(
+        dto.fiatAmount!,
+        Number(pricePerGram)
+      );
+    }
+
+    // Validate that gold amount is in multiples of 0.1 grams
+    try {
+      GoldValidationUtil.validateGoldAmount(goldGramsValue);
+    } catch (error) {
+      const [lower, higher] = GoldValidationUtil.getSuggestedValidAmounts(goldGramsValue);
+      throw new BadRequestException(
+        `${error.message}. Suggested valid amounts: ${lower}g or ${higher}g`
+      );
+    }
+
+    const goldGramsDecimal = new Prisma.Decimal(goldGramsValue);
     const fiatAmountDecimal = hasGrams
       ? goldGramsDecimal.mul(pricePerGram)
       : new Prisma.Decimal(dto.fiatAmount!);
