@@ -39,6 +39,7 @@ export class AppConfigService {
       return raw;
     }
 
-    return raw.split(',').map((origin) => origin.trim());
+    // raw is a string at this point
+    return (raw as string).split(',').map((origin: string) => origin.trim());
   }
 }

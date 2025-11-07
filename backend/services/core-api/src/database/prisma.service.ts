@@ -4,15 +4,16 @@ import { PrismaClient } from '@prisma/client';
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
-    await this.();
+    await this.$connect();
   }
 
   async onModuleDestroy() {
-    await this.();
+    await this.$disconnect();
   }
 
   async enableShutdownHooks(app: INestApplication) {
-    this.('beforeExit', async () => {
+    // @ts-expect-error - Prisma's beforeExit event is not in the types
+    this.$on('beforeExit', async () => {
       await app.close();
     });
   }

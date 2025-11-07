@@ -10,7 +10,7 @@ export class CreateUserDto {
   email?: string;
 
   @IsOptional()
-  @IsPhoneNumber('ZZ')
+  @IsPhoneNumber()
   phoneNumber?: string;
 
   @IsOptional()
