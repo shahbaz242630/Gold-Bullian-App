@@ -7,7 +7,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '../auth/guards/auth.guard';
+import { SupabaseAuthGuard } from '../auth/guards/supabase-auth.guard';
 import { KidsWalletsService } from './services/kids-wallets.service';
 import { CreateKidAccountDto } from './dto/create-kid-account.dto';
 import { UpdateKidAccountDto } from './dto/update-kid-account.dto';
@@ -19,7 +19,7 @@ import { TransferToKidDto } from './dto/transfer-to-kid.dto';
  * RESTful API endpoints for Kids Wallets (Family Accounts) feature
  */
 @Controller('kids-wallets')
-@UseGuards(AuthGuard)
+@UseGuards(SupabaseAuthGuard)
 export class KidsWalletsController {
   constructor(private readonly kidsWalletsService: KidsWalletsService) {}
 

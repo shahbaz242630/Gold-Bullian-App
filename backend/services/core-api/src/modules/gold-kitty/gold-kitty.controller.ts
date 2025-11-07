@@ -8,7 +8,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '../auth/guards/auth.guard';
+import { SupabaseAuthGuard } from '../auth/guards/supabase-auth.guard';
 import { GoldKittyService } from './services/gold-kitty.service';
 import { CreateGoldKittyDto } from './dto/create-gold-kitty.dto';
 import { AddMemberDto } from './dto/add-member.dto';
@@ -22,7 +22,7 @@ import { UpdateGoldKittyDto } from './dto/update-gold-kitty.dto';
  * RESTful API endpoints for Gold Kitty (Group Savings) feature
  */
 @Controller('gold-kitty')
-@UseGuards(AuthGuard)
+@UseGuards(SupabaseAuthGuard)
 export class GoldKittyController {
   constructor(private readonly goldKittyService: GoldKittyService) {}
 

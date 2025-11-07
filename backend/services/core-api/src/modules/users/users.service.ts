@@ -15,7 +15,7 @@ export class UsersService {
   }
 
   async createWithDefaults(data: CreateUserDto) {
-    return this.prisma.(async (trx) => {
+    return this.prisma.$transaction(async (trx) => {
       const user = await trx.user.create({ data: this.mapToCreateInput(data) });
 
       await trx.wallet.create({

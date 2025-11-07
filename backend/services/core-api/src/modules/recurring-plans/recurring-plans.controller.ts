@@ -8,7 +8,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '../auth/guards/auth.guard';
+import { SupabaseAuthGuard } from '../auth/guards/supabase-auth.guard';
 import { RecurringPlansService } from './services/recurring-plans.service';
 import { RecurringPlanSchedulerService } from './services/recurring-plan-scheduler.service';
 import { CreateRecurringPlanDto } from './dto/create-recurring-plan.dto';
@@ -20,7 +20,7 @@ import { UpdateRecurringPlanDto } from './dto/update-recurring-plan.dto';
  * RESTful API endpoints for Recurring Savings Plans feature
  */
 @Controller('recurring-plans')
-@UseGuards(AuthGuard)
+@UseGuards(SupabaseAuthGuard)
 export class RecurringPlansController {
   constructor(
     private readonly recurringPlansService: RecurringPlansService,

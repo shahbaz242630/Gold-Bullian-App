@@ -101,16 +101,18 @@ export class KidsWalletValidationService {
    * Validate gold amount follows 0.1gm multiples rule
    */
   validateGoldAmount(goldGrams: number): void {
-    // Must be multiple of 0.1
-    const remainder = goldGrams % 0.1;
-    if (Math.abs(remainder) > 0.00001) { // Using small epsilon for floating point comparison
+    // Check minimum first
+    if (goldGrams < 0.1) {
+      throw new BadRequestException('Minimum transfer amount is 0.1 grams');
+    }
+
+    // Must be multiple of 0.1 - multiply by 10 and check if close to integer
+    // This avoids floating point precision issues (e.g., 0.5 % 0.1 !== 0)
+    const multipliedBy10 = goldGrams * 10;
+    if (Math.abs(multipliedBy10 - Math.round(multipliedBy10)) > 0.00001) {
       throw new BadRequestException(
         `Gold amount must be in multiples of 0.1 grams. Received: ${goldGrams}g`
       );
-    }
-
-    if (goldGrams < 0.1) {
-      throw new BadRequestException('Minimum transfer amount is 0.1 grams');
     }
   }
 }
