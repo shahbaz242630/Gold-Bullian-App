@@ -1,6 +1,5 @@
 # Node / workspace artifacts
 node_modules/
-package-lock.json
 
 # Turbo / build caches
 .turbo/
