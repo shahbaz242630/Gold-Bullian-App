@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '../config/config.module';
 import { DatabaseModule } from '../database/database.module';
 import { SupabaseModule } from '../integrations/supabase/supabase.module';
+import { AdminModule } from '../modules/admin/admin.module';
 import { AuthModule } from '../modules/auth/auth.module';
 import { KycModule } from '../modules/kyc/kyc.module';
 import { NomineesModule } from '../modules/nominees/nominees.module';
@@ -24,6 +25,7 @@ import { HealthModule } from './health/health.module';
     KycModule,
     NomineesModule,
     AuthModule,
+    AdminModule,
     HealthModule,
   ],
 })

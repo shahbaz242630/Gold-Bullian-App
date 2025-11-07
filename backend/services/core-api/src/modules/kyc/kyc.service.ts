@@ -52,10 +52,10 @@ export class KycService {
     const existing = await this.prisma.kycProfile.findUnique({ where: { userId: dto.userId } });
 
     if (!existing) {
-      throw new NotFoundException(KYC profile not found for user );
+      throw new NotFoundException(`KYC profile not found for user ${dto.userId}`);
     }
 
-    const updated = await this.prisma.(async (trx) => {
+    const updated = await this.prisma.$transaction(async (trx) => {
       const profile = await trx.kycProfile.update({
         where: { userId: dto.userId },
         data: {
