@@ -47,6 +47,42 @@ enum WalletType {
   FEE
 }
 
+enum GoldKittyStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum RecurringPlanStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum RecurringPlanFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+enum PhysicalWithdrawalCoinSize {
+  ONE_GRAM
+  FIVE_GRAM
+  TEN_GRAM
+  TWENTY_GRAM
+  FIFTY_GRAM
+  HUNDRED_GRAM
+}
+
+enum PhysicalWithdrawalDeliveryMethod {
+  HOME_DELIVERY
+  PARTNER_PICKUP
+  VAULT_PICKUP
+}
+
 model User {
   id              String          @id @default(uuid())
   supabaseUid     String          @unique
@@ -55,16 +91,25 @@ model User {
   firstName       String?
   lastName        String?
   countryCode     String?
+  dateOfBirth     DateTime?
   kycStatus       KycStatus       @default(PENDING)
   onboardingStep  OnboardingStep  @default(ACCOUNT_CREATED)
+  parentUserId    String?
+  isKidsAccount   Boolean         @default(false)
   nominee         Nominee?
   kycProfile      KycProfile?
   wallets         Wallet[]
   transactions    Transaction[]   @relation("UserTransactions")
+  parentUser      User?           @relation("ParentChildren", fields: [parentUserId], references: [id], onDelete: Cascade)
+  childAccounts   User[]          @relation("ParentChildren")
+  ownedKitties    GoldKitty[]     @relation("KittyOwner")
+  kittyMemberships GoldKittyMember[]
+  recurringPlans  RecurringSavingsPlan[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
   @@index([supabaseUid])
+  @@index([parentUserId])
 }
 
 model KycProfile {
@@ -134,6 +179,9 @@ model Transaction {
 
   user            User              @relation("UserTransactions", fields: [userId], references: [id], onDelete: Cascade)
   wallet          Wallet            @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  kittyContribution GoldKittyContribution?
+  recurringExecution RecurringPlanExecution?
+  physicalWithdrawalDetails PhysicalWithdrawalDetails?
 
   @@index([userId, createdAt], map: "transaction_user_created_idx")
   @@index([referenceCode], map: "transaction_reference_idx")
@@ -160,4 +208,158 @@ model PriceOverride {
   reason        String?
   expiresAt     DateTime?
   createdAt     DateTime @default(now())
+}
+
+// Gold Kitty (Group Savings) Models
+model GoldKitty {
+  id                String            @id @default(uuid())
+  ownerId           String
+  name              String
+  description       String?
+  monthlyAmountAED  Decimal           @db.Decimal(18, 2)
+  contributionDay   Int               // Day of month (1-31)
+  startDate         DateTime
+  endDate           DateTime?
+  status            GoldKittyStatus   @default(ACTIVE)
+  currentRound      Int               @default(1)
+  totalRounds       Int
+  metadata          Json?
+  owner             User              @relation("KittyOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members           GoldKittyMember[]
+  contributions     GoldKittyContribution[]
+  allocations       GoldKittyAllocation[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([ownerId])
+  @@index([status])
+}
+
+model GoldKittyMember {
+  id              String    @id @default(uuid())
+  kittyId         String
+  userId          String
+  joinedAt        DateTime  @default(now())
+  isActive        Boolean   @default(true)
+  allocationOrder Int       // Order in which they receive the pot
+  hasReceivedPot  Boolean   @default(false)
+  kitty           GoldKitty @relation(fields: [kittyId], references: [id], onDelete: Cascade)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contributions   GoldKittyContribution[]
+  allocations     GoldKittyAllocation[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([kittyId, userId])
+  @@index([kittyId])
+  @@index([userId])
+}
+
+model GoldKittyContribution {
+  id              String          @id @default(uuid())
+  kittyId         String
+  memberId        String
+  roundNumber     Int
+  amountAED       Decimal         @db.Decimal(18, 2)
+  goldGrams       Decimal         @db.Decimal(18, 8)
+  transactionId   String?         @unique
+  contributedAt   DateTime?
+  isPaid          Boolean         @default(false)
+  kitty           GoldKitty       @relation(fields: [kittyId], references: [id], onDelete: Cascade)
+  member          GoldKittyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  transaction     Transaction?    @relation(fields: [transactionId], references: [id])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([kittyId, memberId, roundNumber])
+  @@index([kittyId, roundNumber])
+}
+
+model GoldKittyAllocation {
+  id              String          @id @default(uuid())
+  kittyId         String
+  memberId        String
+  roundNumber     Int
+  totalGoldGrams  Decimal         @db.Decimal(18, 8)
+  totalAmountAED  Decimal         @db.Decimal(18, 2)
+  allocatedAt     DateTime        @default(now())
+  kitty           GoldKitty       @relation(fields: [kittyId], references: [id], onDelete: Cascade)
+  member          GoldKittyMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([kittyId, roundNumber])
+  @@index([kittyId])
+  @@index([memberId])
+}
+
+// Recurring Savings Plans
+model RecurringSavingsPlan {
+  id              String                  @id @default(uuid())
+  userId          String
+  name            String
+  goalName        String?
+  goalAmountAED   Decimal?                @db.Decimal(18, 2)
+  goalDate        DateTime?
+  recurringAmountAED Decimal              @db.Decimal(18, 2)
+  frequency       RecurringPlanFrequency  @default(MONTHLY)
+  executionDay    Int                     // Day of month/week
+  startDate       DateTime
+  endDate         DateTime?
+  status          RecurringPlanStatus     @default(ACTIVE)
+  nextExecutionDate DateTime?
+  cardToken       String?                 // Tokenized card for auto-debit
+  metadata        Json?
+  user            User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  executions      RecurringPlanExecution[]
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([nextExecutionDate])
+}
+
+model RecurringPlanExecution {
+  id              String               @id @default(uuid())
+  planId          String
+  scheduledDate   DateTime
+  executedDate    DateTime?
+  amountAED       Decimal              @db.Decimal(18, 2)
+  goldGrams       Decimal?             @db.Decimal(18, 8)
+  transactionId   String?              @unique
+  status          TransactionStatus    @default(PENDING)
+  failureReason   String?
+  plan            RecurringSavingsPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  transaction     Transaction?         @relation(fields: [transactionId], references: [id])
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@index([planId])
+  @@index([scheduledDate])
+  @@index([status])
+}
+
+// Physical Withdrawal Details
+model PhysicalWithdrawalDetails {
+  id              String                            @id @default(uuid())
+  transactionId   String                            @unique
+  coinSize        PhysicalWithdrawalCoinSize
+  quantity        Int
+  deliveryMethod  PhysicalWithdrawalDeliveryMethod
+  partnerJewellerId String?
+  deliveryAddress Json?
+  pickupLocation  String?
+  trackingNumber  String?
+  estimatedDelivery DateTime?
+  actualDelivery  DateTime?
+  recipientName   String
+  recipientPhone  String
+  specialInstructions String?
+  transaction     Transaction                       @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  createdAt       DateTime                          @default(now())
+  updatedAt       DateTime                          @updatedAt
+
+  @@index([transactionId])
+  @@index([trackingNumber])
 }

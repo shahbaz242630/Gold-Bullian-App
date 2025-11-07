@@ -6,6 +6,22 @@ import { SubmitKycDto } from './dto/submit-kyc.dto';
 import { UpdateKycStatusDto } from './dto/update-kyc-status.dto';
 import { KycProfileEntity } from './entities/kyc-profile.entity';
 
+/**
+ * KYC Service - Ready for Digitify Integration
+ *
+ * This service is designed to work with Digitify KYC provider.
+ * The provider field is already in place to store 'DIGITIFY'.
+ * The providerRef field stores the Digitify verification ID.
+ *
+ * Integration Steps:
+ * 1. Add to .env: DIGITIFY_API_URL, DIGITIFY_API_KEY, DIGITIFY_CLIENT_ID
+ * 2. Implement submitToDigitify() method to send documents to Digitify API
+ * 3. Implement webhook handler for Digitify verification callbacks
+ * 4. Update submit() method to call Digitify API
+ * 5. Store Digitify response in metadata field
+ *
+ * Current Implementation: Generic KYC submission (ready to plug Digitify)
+ */
 @Injectable()
 export class KycService {
   constructor(private readonly prisma: PrismaService) {}
