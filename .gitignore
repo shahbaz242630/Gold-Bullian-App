@@ -46,3 +46,4 @@ reports/
 
 # Prisma
 backend/prisma/.env
+backend/services/core-api/dist/
