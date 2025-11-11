@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import Stripe from 'stripe';
 
+import { StripePaymentMethodType } from '@prisma/client';
 import { PrismaService } from '../../../database/prisma.service';
 import { StripeService } from '../../../integrations/stripe/stripe.service';
 import { StripeErrorHandlerService } from './stripe-error-handler.service';
@@ -201,12 +202,12 @@ export class StripePaymentMethodService {
    * @param type - Stripe payment method type
    * @returns Database payment method type
    */
-  private mapPaymentMethodType(type: string): string {
+  private mapPaymentMethodType(type: string): StripePaymentMethodType {
     const typeMap: Record<string, string> = {
       card: 'CARD',
       us_bank_account: 'BANK_ACCOUNT',
       // Add more types as needed
     };
-    return typeMap[type] || 'CARD';
+    return (typeMap[type] || 'CARD') as StripePaymentMethodType;
   }
 }

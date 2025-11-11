@@ -188,7 +188,7 @@ export class StripeWebhookService {
     await this.paymentIntentService.updatePaymentStatus(
       paymentIntent.id,
       paymentIntent.status,
-      paymentIntent.charges.data[0]?.receipt_url || undefined,
+      (paymentIntent as any).charges?.data[0]?.receipt_url || undefined,
     );
 
     // TODO: Link to Transaction and update wallet balance

@@ -3,13 +3,13 @@
  * Aggregated view of parent and all kids' accounts
  */
 export class FamilyDashboardEntity {
-  parentAccount: {
+  parentAccount!: {
     id: string;
     fullName: string;
     balanceGrams: number;
   };
 
-  kidAccounts: Array<{
+  kidAccounts!: Array<{
     id: string;
     fullName: string;
     age: number | null;
@@ -17,7 +17,7 @@ export class FamilyDashboardEntity {
     kycStatus: string;
   }>;
 
-  totalFamilyGoldGrams: number;
-  totalFamilyValueAED: number;
-  numberOfKids: number;
+  totalFamilyGoldGrams!: number;
+  totalFamilyValueAED!: number;
+  numberOfKids!: number;
 }

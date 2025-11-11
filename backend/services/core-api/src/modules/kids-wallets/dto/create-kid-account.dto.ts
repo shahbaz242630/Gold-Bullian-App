@@ -4,15 +4,15 @@ import { Type } from 'class-transformer';
 export class CreateKidAccountDto {
   @IsString()
   @IsNotEmpty()
-  parentUserId: string;
+  parentUserId!: string;
 
   @IsString()
   @IsNotEmpty()
-  firstName: string;
+  firstName!: string;
 
   @IsString()
   @IsNotEmpty()
-  lastName: string;
+  lastName!: string;
 
   @IsEmail()
   @IsOptional()
@@ -20,7 +20,7 @@ export class CreateKidAccountDto {
 
   @IsDateString()
   @IsNotEmpty()
-  dateOfBirth: string; // ISO date string
+  dateOfBirth!: string; // ISO date string
 
   @IsString()
   @IsOptional()

@@ -5,7 +5,7 @@ import { IsOptional, IsString, IsObject } from 'class-validator';
  */
 export class CreateSubscriptionDto {
   @IsString()
-  priceId: string;
+  priceId!: string;
 
   @IsOptional()
   @IsString()

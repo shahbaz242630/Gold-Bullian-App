@@ -5,7 +5,7 @@ import { IsEnum, IsOptional, IsString } from 'class-validator';
  */
 export class RefundPaymentDto {
   @IsString()
-  paymentIntentId: string;
+  paymentIntentId!: string;
 
   @IsOptional()
   @IsEnum(['duplicate', 'fraudulent', 'requested_by_customer'])

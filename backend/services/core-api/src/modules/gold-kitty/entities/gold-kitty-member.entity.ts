@@ -1,15 +1,15 @@
 import { GoldKittyMember } from '@prisma/client';
 
 export class GoldKittyMemberEntity {
-  id: string;
-  kittyId: string;
-  userId: string;
-  joinedAt: Date;
-  isActive: boolean;
-  allocationOrder: number;
-  hasReceivedPot: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  id!: string;
+  kittyId!: string;
+  userId!: string;
+  joinedAt!: Date;
+  isActive!: boolean;
+  allocationOrder!: number;
+  hasReceivedPot!: boolean;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static fromModel(model: GoldKittyMember): GoldKittyMemberEntity {
     const entity = new GoldKittyMemberEntity();

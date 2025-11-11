@@ -1,23 +1,23 @@
 import { RecurringSavingsPlan, RecurringPlanStatus, RecurringPlanFrequency } from '@prisma/client';
 
 export class RecurringPlanEntity {
-  id: string;
-  userId: string;
-  name: string;
-  goalName: string | null;
-  goalAmountAED: number | null;
-  goalDate: Date | null;
-  recurringAmountAED: number;
-  frequency: RecurringPlanFrequency;
-  executionDay: number;
-  startDate: Date;
-  endDate: Date | null;
-  status: RecurringPlanStatus;
-  nextExecutionDate: Date | null;
-  cardToken: string | null;
-  metadata: any;
-  createdAt: Date;
-  updatedAt: Date;
+  id!: string;
+  userId!: string;
+  name!: string;
+  goalName!: string | null;
+  goalAmountAED!: number | null;
+  goalDate!: Date | null;
+  recurringAmountAED!: number;
+  frequency!: RecurringPlanFrequency;
+  executionDay!: number;
+  startDate!: Date;
+  endDate!: Date | null;
+  status!: RecurringPlanStatus;
+  nextExecutionDate!: Date | null;
+  cardToken!: string | null;
+  metadata!: any;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static fromModel(model: RecurringSavingsPlan): RecurringPlanEntity {
     const entity = new RecurringPlanEntity();

@@ -5,7 +5,7 @@ import { IsOptional, IsString } from 'class-validator';
  */
 export class ConfirmPaymentDto {
   @IsString()
-  paymentIntentId: string;
+  paymentIntentId!: string;
 
   @IsOptional()
   @IsString()

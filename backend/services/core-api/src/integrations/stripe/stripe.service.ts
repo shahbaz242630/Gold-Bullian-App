@@ -33,7 +33,7 @@ export class StripeService {
 
     if (secretKey) {
       this.client = new Stripe(secretKey, {
-        apiVersion: '2024-11-20.acacia', // Latest stable API version
+        apiVersion: '2025-10-29.clover', // Latest stable API version
         typescript: true,
         telemetry: false, // Disable telemetry for privacy
         maxNetworkRetries: 3, // Retry failed requests

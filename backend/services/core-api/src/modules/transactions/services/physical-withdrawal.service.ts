@@ -104,7 +104,7 @@ export class PhysicalWithdrawalService {
           quantity: dto.quantity,
           deliveryMethod: dto.deliveryMethod,
           partnerJewellerId: dto.partnerJewellerId,
-          deliveryAddress: dto.deliveryAddress as Prisma.InputJsonValue,
+          deliveryAddress: dto.deliveryAddress ? (dto.deliveryAddress as unknown as Prisma.InputJsonValue) : Prisma.JsonNull,
           pickupLocation: dto.pickupLocation,
           recipientName: dto.recipientName,
           recipientPhone: dto.recipientPhone,

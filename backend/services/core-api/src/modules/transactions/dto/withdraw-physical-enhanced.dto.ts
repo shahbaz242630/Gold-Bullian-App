@@ -9,23 +9,23 @@ import { PhysicalWithdrawalCoinSize, PhysicalWithdrawalDeliveryMethod } from '@p
 export class DeliveryAddressDto {
   @IsString()
   @IsNotEmpty()
-  street: string;
+  street!: string;
 
   @IsString()
   @IsNotEmpty()
-  city: string;
+  city!: string;
 
   @IsString()
   @IsNotEmpty()
-  state: string;
+  state!: string;
 
   @IsString()
   @IsNotEmpty()
-  postalCode: string;
+  postalCode!: string;
 
   @IsString()
   @IsNotEmpty()
-  country: string;
+  country!: string;
 
   @IsString()
   @IsOptional()

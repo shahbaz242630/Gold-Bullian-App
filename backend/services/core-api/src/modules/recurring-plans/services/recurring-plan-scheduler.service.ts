@@ -60,9 +60,10 @@ export class RecurringPlanSchedulerService {
           await this.executionService.executePlan(plan.id);
           this.logger.log(`Successfully executed plan ${plan.id}`);
         } catch (error) {
+          const err = error as Error;
           this.logger.error(
-            `Failed to execute plan ${plan.id}: ${error.message}`,
-            error.stack
+            `Failed to execute plan ${plan.id}: ${err.message}`,
+            err.stack
           );
           // Continue with next plan
         }
@@ -101,8 +102,9 @@ export class RecurringPlanSchedulerService {
           await this.executionService.retryExecution(execution.id);
           this.logger.log(`Successfully retried execution ${execution.id}`);
         } catch (error) {
+          const err = error as Error;
           this.logger.error(
-            `Failed to retry execution ${execution.id}: ${error.message}`
+            `Failed to retry execution ${execution.id}: ${err.message}`
           );
           // Continue with next execution
         }
@@ -117,7 +119,7 @@ export class RecurringPlanSchedulerService {
   /**
    * Helper method to find recent failed executions
    */
-  private async findRecentFailedExecutions(since: Date) {
+  private async findRecentFailedExecutions(since: Date): Promise<Array<{ id: string }>> {
     // This would use Prisma to find failed executions
     // Implementation depends on your specific requirements
     return [];

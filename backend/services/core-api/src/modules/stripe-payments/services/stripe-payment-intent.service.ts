@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import Stripe from 'stripe';
 
+import { StripePaymentStatus } from '@prisma/client';
 import { PrismaService } from '../../../database/prisma.service';
 import { StripeService } from '../../../integrations/stripe/stripe.service';
 import { StripeErrorHandlerService } from './stripe-error-handler.service';
@@ -292,7 +293,7 @@ export class StripePaymentIntentService {
    * @param stripeStatus - Stripe status
    * @returns Database status
    */
-  private mapStripeStatus(stripeStatus: string): string {
+  private mapStripeStatus(stripeStatus: string): StripePaymentStatus {
     const statusMap: Record<string, string> = {
       requires_payment_method: 'REQUIRES_PAYMENT_METHOD',
       requires_confirmation: 'PENDING',
@@ -303,6 +304,6 @@ export class StripePaymentIntentService {
       succeeded: 'SUCCEEDED',
     };
 
-    return statusMap[stripeStatus] || 'PENDING';
+    return (statusMap[stripeStatus] || 'PENDING') as StripePaymentStatus;
   }
 }

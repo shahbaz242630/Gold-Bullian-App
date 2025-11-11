@@ -1,15 +1,15 @@
 import { GoldKittyAllocation } from '@prisma/client';
 
 export class GoldKittyAllocationEntity {
-  id: string;
-  kittyId: string;
-  memberId: string;
-  roundNumber: number;
-  totalGoldGrams: number;
-  totalAmountAED: number;
-  allocatedAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  id!: string;
+  kittyId!: string;
+  memberId!: string;
+  roundNumber!: number;
+  totalGoldGrams!: number;
+  totalAmountAED!: number;
+  allocatedAt!: Date;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static fromModel(model: GoldKittyAllocation): GoldKittyAllocationEntity {
     const entity = new GoldKittyAllocationEntity();

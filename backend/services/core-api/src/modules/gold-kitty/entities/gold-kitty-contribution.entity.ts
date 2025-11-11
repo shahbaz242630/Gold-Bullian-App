@@ -1,17 +1,17 @@
 import { GoldKittyContribution } from '@prisma/client';
 
 export class GoldKittyContributionEntity {
-  id: string;
-  kittyId: string;
-  memberId: string;
-  roundNumber: number;
-  amountAED: number;
-  goldGrams: number;
-  transactionId: string | null;
-  contributedAt: Date | null;
-  isPaid: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  id!: string;
+  kittyId!: string;
+  memberId!: string;
+  roundNumber!: number;
+  amountAED!: number;
+  goldGrams!: number;
+  transactionId!: string | null;
+  contributedAt!: Date | null;
+  isPaid!: boolean;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static fromModel(model: GoldKittyContribution): GoldKittyContributionEntity {
     const entity = new GoldKittyContributionEntity();

@@ -1,17 +1,17 @@
 import { RecurringPlanExecution, TransactionStatus } from '@prisma/client';
 
 export class RecurringPlanExecutionEntity {
-  id: string;
-  planId: string;
-  scheduledDate: Date;
-  executedDate: Date | null;
-  amountAED: number;
-  goldGrams: number | null;
-  transactionId: string | null;
-  status: TransactionStatus;
-  failureReason: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  id!: string;
+  planId!: string;
+  scheduledDate!: Date;
+  executedDate!: Date | null;
+  amountAED!: number;
+  goldGrams!: number | null;
+  transactionId!: string | null;
+  status!: TransactionStatus;
+  failureReason!: string | null;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static fromModel(model: RecurringPlanExecution): RecurringPlanExecutionEntity {
     const entity = new RecurringPlanExecutionEntity();

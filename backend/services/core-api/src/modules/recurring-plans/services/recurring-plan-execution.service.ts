@@ -97,7 +97,7 @@ export class RecurringPlanExecutionService {
         where: { planId, scheduledDate },
         data: {
           status: TransactionStatus.FAILED,
-          failureReason: error.message,
+          failureReason: (error as Error).message,
         },
       });
 

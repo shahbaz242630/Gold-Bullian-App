@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Stripe from 'stripe';
 
+import { StripeSubscriptionStatus } from '@prisma/client';
 import { PrismaService } from '../../../database/prisma.service';
 import { StripeService } from '../../../integrations/stripe/stripe.service';
 import { StripeErrorHandlerService } from './stripe-error-handler.service';
@@ -74,8 +75,8 @@ export class StripeSubscriptionService {
           recurringPlanId: params.recurringPlanId,
           priceId: params.priceId,
           status: this.mapSubscriptionStatus(subscription.status),
-          currentPeriodStart: new Date(subscription.current_period_start * 1000),
-          currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+          currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+          currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
           cancelAtPeriodEnd: subscription.cancel_at_period_end,
           trialStart: subscription.trial_start ? new Date(subscription.trial_start * 1000) : null,
           trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
@@ -260,7 +261,7 @@ export class StripeSubscriptionService {
    * @param stripeStatus - Stripe status
    * @returns Database status
    */
-  private mapSubscriptionStatus(stripeStatus: string): string {
+  private mapSubscriptionStatus(stripeStatus: string): StripeSubscriptionStatus {
     const statusMap: Record<string, string> = {
       active: 'ACTIVE',
       past_due: 'PAST_DUE',
@@ -272,6 +273,6 @@ export class StripeSubscriptionService {
       paused: 'PAUSED',
     };
 
-    return statusMap[stripeStatus] || 'ACTIVE';
+    return (statusMap[stripeStatus] || 'ACTIVE') as StripeSubscriptionStatus;
   }
 }

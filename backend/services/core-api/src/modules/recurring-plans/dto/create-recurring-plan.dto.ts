@@ -5,11 +5,11 @@ import { RecurringPlanFrequency } from '@prisma/client';
 export class CreateRecurringPlanDto {
   @IsString()
   @IsNotEmpty()
-  userId: string;
+  userId!: string;
 
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsString()
   @IsOptional()
@@ -28,17 +28,17 @@ export class CreateRecurringPlanDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(10) // Minimum recurring amount 10 AED
   @Type(() => Number)
-  recurringAmountAED: number;
+  recurringAmountAED!: number;
 
   @IsEnum(RecurringPlanFrequency)
-  frequency: RecurringPlanFrequency; // DAILY, WEEKLY, MONTHLY, YEARLY
+  frequency!: RecurringPlanFrequency; // DAILY, WEEKLY, MONTHLY, YEARLY
 
   @IsInt()
   @Min(1)
-  executionDay: number; // Day of month (1-31) for MONTHLY, day of week (1-7) for WEEKLY
+  executionDay!: number; // Day of month (1-31) for MONTHLY, day of week (1-7) for WEEKLY
 
   @IsDateString()
-  startDate: string; // ISO date string
+  startDate!: string; // ISO date string
 
   @IsString()
   @IsOptional()

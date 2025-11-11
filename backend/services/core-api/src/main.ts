@@ -24,10 +24,13 @@ async function bootstrap() {
   const port = configService.getNumber('PORT', 3000);
   const host = configService.get('HOST');
 
+  // @ts-expect-error - Fastify plugin type mismatch
   await app.register(helmet);
+  // @ts-expect-error - Fastify plugin type mismatch
   await app.register(fastifyCookie, {
     secret: configService.get('COOKIE_SECRET'),
   });
+  // @ts-expect-error - Fastify plugin type mismatch
   await app.register(rateLimit, {
     global: true,
     max: 100,

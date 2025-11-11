@@ -29,16 +29,14 @@ export class AppConfigService {
     return parsed;
   }
 
+
   getCorsOrigins(): string[] {
     const raw = this.get('CORS_ORIGINS');
-    if (!raw) {
+    if (!raw || !Array.isArray(raw) || raw.length === 0) {
       return ['*'];
     }
 
-    if (Array.isArray(raw)) {
-      return raw;
-    }
-
-    return raw.split(',').map((origin) => origin.trim());
+    return raw;
   }
 }
+

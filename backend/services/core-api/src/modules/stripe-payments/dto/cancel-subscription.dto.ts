@@ -5,7 +5,7 @@ import { IsBoolean, IsOptional, IsString } from 'class-validator';
  */
 export class CancelSubscriptionDto {
   @IsString()
-  subscriptionId: string;
+  subscriptionId!: string;
 
   @IsOptional()
   @IsBoolean()

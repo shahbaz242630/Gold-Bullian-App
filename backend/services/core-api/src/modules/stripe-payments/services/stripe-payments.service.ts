@@ -146,13 +146,9 @@ export class StripePaymentsService {
         return { success: true, paymentIntent };
       }
 
-      // Confirm if needed
-      if (paymentIntent.status !== 'succeeded') {
-        const confirmed = await this.paymentIntentService.confirmPaymentIntent(paymentIntentId);
-        return { success: confirmed.status === 'succeeded', paymentIntent: confirmed };
-      }
-
-      return { success: true, paymentIntent };
+      // Confirm if needed (status is not 'succeeded' at this point)
+      const confirmed = await this.paymentIntentService.confirmPaymentIntent(paymentIntentId);
+      return { success: confirmed.status === 'succeeded', paymentIntent: confirmed };
     } catch (error) {
       this.errorHandler.handleError(error, 'confirmGoldPurchase');
     }

@@ -5,19 +5,19 @@ import { User, KycStatus } from '@prisma/client';
  * Represents a child account linked to a parent
  */
 export class KidAccountEntity {
-  id: string;
-  supabaseUid: string;
-  email: string | null;
-  phoneNumber: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  countryCode: string | null;
-  dateOfBirth: Date | null;
-  kycStatus: KycStatus;
-  parentUserId: string | null;
-  isKidsAccount: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  id!: string;
+  supabaseUid!: string;
+  email!: string | null;
+  phoneNumber!: string | null;
+  firstName!: string | null;
+  lastName!: string | null;
+  countryCode!: string | null;
+  dateOfBirth!: Date | null;
+  kycStatus!: KycStatus;
+  parentUserId!: string | null;
+  isKidsAccount!: boolean;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   // Extended properties for UI
   fullName?: string;
