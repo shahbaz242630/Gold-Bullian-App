@@ -105,6 +105,7 @@ model User {
   ownedKitties    GoldKitty[]     @relation("KittyOwner")
   kittyMemberships GoldKittyMember[]
   recurringPlans  RecurringSavingsPlan[]
+  stripeCustomer  StripeCustomer?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
@@ -182,6 +183,7 @@ model Transaction {
   kittyContribution GoldKittyContribution?
   recurringExecution RecurringPlanExecution?
   physicalWithdrawalDetails PhysicalWithdrawalDetails?
+  stripePayment   StripePayment?
 
   @@index([userId, createdAt], map: "transaction_user_created_idx")
   @@index([referenceCode], map: "transaction_reference_idx")
@@ -362,4 +364,154 @@ model PhysicalWithdrawalDetails {
 
   @@index([transactionId])
   @@index([trackingNumber])
+}
+
+// Stripe Integration Models
+enum StripePaymentStatus {
+  PENDING
+  PROCESSING
+  REQUIRES_ACTION
+  REQUIRES_PAYMENT_METHOD
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum StripePaymentMethodType {
+  CARD
+  BANK_ACCOUNT
+  WALLET
+}
+
+enum StripeSubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  UNPAID
+  CANCELED
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
+  PAUSED
+}
+
+enum StripeWebhookEventStatus {
+  PENDING
+  PROCESSED
+  FAILED
+  IGNORED
+}
+
+// Stripe Customer mapping
+model StripeCustomer {
+  id                String               @id @default(uuid())
+  userId            String               @unique
+  stripeCustomerId  String               @unique
+  email             String?
+  name              String?
+  phone             String?
+  metadata          Json?
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments          StripePayment[]
+  paymentMethods    StripePaymentMethod[]
+  subscriptions     StripeSubscription[]
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  @@index([userId])
+  @@index([stripeCustomerId])
+}
+
+// Stripe Payment tracking
+model StripePayment {
+  id                  String                @id @default(uuid())
+  stripeCustomerId    String
+  stripePaymentIntentId String             @unique
+  userId              String
+  transactionId       String?               @unique
+  amount              Decimal               @db.Decimal(18, 2)
+  currency            String                @default("AED")
+  status              StripePaymentStatus   @default(PENDING)
+  paymentMethodId     String?
+  receiptUrl          String?
+  failureMessage      String?
+  metadata            Json?
+  customer            StripeCustomer        @relation(fields: [stripeCustomerId], references: [id], onDelete: Cascade)
+  transaction         Transaction?          @relation(fields: [transactionId], references: [id])
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  @@index([stripeCustomerId])
+  @@index([userId])
+  @@index([status])
+  @@index([stripePaymentIntentId])
+}
+
+// Stripe Payment Methods
+model StripePaymentMethod {
+  id                    String                  @id @default(uuid())
+  stripeCustomerId      String
+  stripePaymentMethodId String                  @unique
+  userId                String
+  type                  StripePaymentMethodType @default(CARD)
+  cardBrand             String?
+  cardLast4             String?
+  cardExpMonth          Int?
+  cardExpYear           Int?
+  isDefault             Boolean                 @default(false)
+  billingDetails        Json?
+  metadata              Json?
+  customer              StripeCustomer          @relation(fields: [stripeCustomerId], references: [id], onDelete: Cascade)
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+
+  @@index([stripeCustomerId])
+  @@index([userId])
+  @@index([stripePaymentMethodId])
+}
+
+// Stripe Subscriptions (for recurring plans)
+model StripeSubscription {
+  id                      String                   @id @default(uuid())
+  stripeCustomerId        String
+  stripeSubscriptionId    String                   @unique
+  userId                  String
+  recurringPlanId         String?
+  productId               String?
+  priceId                 String?
+  status                  StripeSubscriptionStatus @default(ACTIVE)
+  currentPeriodStart      DateTime
+  currentPeriodEnd        DateTime
+  cancelAtPeriodEnd       Boolean                  @default(false)
+  canceledAt              DateTime?
+  trialStart              DateTime?
+  trialEnd                DateTime?
+  metadata                Json?
+  customer                StripeCustomer           @relation(fields: [stripeCustomerId], references: [id], onDelete: Cascade)
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
+
+  @@index([stripeCustomerId])
+  @@index([userId])
+  @@index([status])
+  @@index([stripeSubscriptionId])
+}
+
+// Stripe Webhook Events (for idempotency and audit trail)
+model StripeWebhookEvent {
+  id                String                    @id @default(uuid())
+  stripeEventId     String                    @unique
+  type              String
+  status            StripeWebhookEventStatus  @default(PENDING)
+  payload           Json
+  processedAt       DateTime?
+  failureReason     String?
+  retryCount        Int                       @default(0)
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+
+  @@index([stripeEventId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
 }

@@ -13,6 +13,28 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url('DATABASE_URL must be a valid Supabase Postgres URL'),
   SUPABASE_URL: z.string().url('SUPABASE_URL must be a valid Supabase project URL'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  // Stripe Configuration (optional for now - will be required when keys are ready)
+  STRIPE_SECRET_KEY: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.startsWith('sk_'),
+      'STRIPE_SECRET_KEY must start with sk_ (secret key)',
+    ),
+  STRIPE_PUBLISHABLE_KEY: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.startsWith('pk_'),
+      'STRIPE_PUBLISHABLE_KEY must start with pk_ (publishable key)',
+    ),
+  STRIPE_WEBHOOK_SECRET: z
+    .string()
+    .optional()
+    .refine(
+      (val) => !val || val.startsWith('whsec_'),
+      'STRIPE_WEBHOOK_SECRET must start with whsec_ (webhook secret)',
+    ),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;
