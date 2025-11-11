@@ -9,7 +9,7 @@ import fastifyCookie from '@fastify/cookie';
 import rateLimit from '@fastify/rate-limit';
 
 import { AppModule } from './app/app.module';
-import { ConfigService } from './config/config.service';
+import { AppConfigService } from './config/config.service';
 import { PrismaService } from './database/prisma.service';
 
 async function bootstrap() {
@@ -20,9 +20,9 @@ async function bootstrap() {
     { bufferLogs: true },
   );
 
-  const configService = app.get(ConfigService);
+  const configService = app.get(AppConfigService);
   const port = configService.getNumber('PORT', 3000);
-  const host = configService.get('HOST', '0.0.0.0');
+  const host = configService.get('HOST');
 
   await app.register(helmet);
   await app.register(fastifyCookie, {
