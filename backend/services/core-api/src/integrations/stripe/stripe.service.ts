@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
-
-import { AppConfigService } from '../../config/config.service';
 
 /**
  * Stripe Integration Service
@@ -29,8 +28,8 @@ export class StripeService {
   private readonly client: Stripe | null = null;
   private readonly isConfigured: boolean;
 
-  constructor(private readonly configService: AppConfigService) {
-    const secretKey = this.configService.get('STRIPE_SECRET_KEY');
+  constructor(private readonly configService: ConfigService) {
+    const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
 
     if (secretKey) {
       this.client = new Stripe(secretKey, {
@@ -85,7 +84,7 @@ export class StripeService {
    * @returns Webhook secret or null if not configured
    */
   getWebhookSecret(): string | null {
-    return this.configService.get('STRIPE_WEBHOOK_SECRET') ?? null;
+    return this.configService.get<string>('STRIPE_WEBHOOK_SECRET') ?? null;
   }
 
   /**
@@ -94,6 +93,6 @@ export class StripeService {
    * @returns Publishable key or null if not configured
    */
   getPublishableKey(): string | null {
-    return this.configService.get('STRIPE_PUBLISHABLE_KEY') ?? null;
+    return this.configService.get<string>('STRIPE_PUBLISHABLE_KEY') ?? null;
   }
 }
