@@ -8,6 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SupabaseAuthGuard } from '../auth/guards/supabase-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { PhysicalWithdrawalService } from './services/physical-withdrawal.service';
 import { WithdrawPhysicalDto } from './dto/withdraw-physical-enhanced.dto';
 
@@ -15,6 +17,8 @@ import { WithdrawPhysicalDto } from './dto/withdraw-physical-enhanced.dto';
  * Physical Withdrawal Controller
  *
  * Enhanced endpoints for physical gold withdrawals with detailed options
+ *
+ * SECURITY: Admin endpoints protected with role-based access control
  */
 @Controller('transactions/physical-withdrawal')
 @UseGuards(SupabaseAuthGuard)
@@ -50,15 +54,19 @@ export class PhysicalWithdrawalController {
    * Get all pending withdrawals (admin only)
    */
   @Get('admin/pending')
+  @UseGuards(RolesGuard)
+  @Roles('admin')
   async getPendingWithdrawals() {
     return this.physicalWithdrawalService.getPendingWithdrawals();
   }
 
   /**
    * PATCH /transactions/physical-withdrawal/:transactionId/tracking
-   * Update delivery tracking (admin/fulfillment partner)
+   * Update delivery tracking (admin only)
    */
   @Patch(':transactionId/tracking')
+  @UseGuards(RolesGuard)
+  @Roles('admin')
   async updateTracking(
     @Param('transactionId') transactionId: string,
     @Body() body: { trackingNumber: string; estimatedDelivery?: string }
@@ -72,9 +80,11 @@ export class PhysicalWithdrawalController {
 
   /**
    * PATCH /transactions/physical-withdrawal/:transactionId/delivered
-   * Mark as delivered (admin/fulfillment partner)
+   * Mark as delivered (admin only)
    */
   @Patch(':transactionId/delivered')
+  @UseGuards(RolesGuard)
+  @Roles('admin')
   async markAsDelivered(@Param('transactionId') transactionId: string) {
     return this.physicalWithdrawalService.markAsDelivered(transactionId);
   }

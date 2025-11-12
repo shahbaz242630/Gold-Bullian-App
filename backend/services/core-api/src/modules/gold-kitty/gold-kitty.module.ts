@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../../database/database.module';
+import { UsersModule } from '../users/users.module';
 import { GoldKittyController } from './gold-kitty.controller';
 import { GoldKittyService } from './services/gold-kitty.service';
 import { GoldKittyCreationService } from './services/gold-kitty-creation.service';
@@ -24,9 +25,13 @@ import { GoldKittyValidationService } from './services/gold-kitty-validation.ser
  * - Clean separation of concerns
  * - Easy to test and debug
  * - Scalable and maintainable
+ *
+ * Security:
+ * - Ownership verification on all endpoints
+ * - Role-based access (owner vs member)
  */
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, UsersModule],
   controllers: [GoldKittyController],
   providers: [
     // Main orchestrator

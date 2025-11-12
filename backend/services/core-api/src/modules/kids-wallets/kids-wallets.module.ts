@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../../database/database.module';
+import { UsersModule } from '../users/users.module';
 import { KidsWalletsController } from './kids-wallets.controller';
 import { KidsWalletsService } from './services/kids-wallets.service';
 import { KidsWalletCreationService } from './services/kids-wallet-creation.service';
@@ -27,6 +28,10 @@ import { KidsWalletValidationService } from './services/kids-wallet-validation.s
  * - Easy to test and debug
  * - Scalable and maintainable
  *
+ * Security:
+ * - Ownership verification on all endpoints
+ * - Parent-child relationship validation
+ *
  * Business Rules:
  * - Kids must be under 18 years old
  * - Kids cannot create other kid accounts
@@ -35,7 +40,7 @@ import { KidsWalletValidationService } from './services/kids-wallet-validation.s
  * - Each kid account is fully independent for KYC purposes
  */
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, UsersModule],
   controllers: [KidsWalletsController],
   providers: [
     // Main orchestrator

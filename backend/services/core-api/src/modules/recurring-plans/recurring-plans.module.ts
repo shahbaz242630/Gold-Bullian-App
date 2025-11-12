@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../../database/database.module';
+import { UsersModule } from '../users/users.module';
 import { RecurringPlansController } from './recurring-plans.controller';
 import { RecurringPlansService } from './services/recurring-plans.service';
 import { RecurringPlanCreationService } from './services/recurring-plan-creation.service';
@@ -28,6 +29,10 @@ import { RecurringPlanSchedulerService } from './services/recurring-plan-schedul
  * - Easy to test and debug
  * - Scalable and maintainable
  *
+ * Security:
+ * - Ownership verification on all endpoints
+ * - Admin-only access to scheduler trigger
+ *
  * Setup for Cron Jobs:
  * 1. Install: npm install @nestjs/schedule
  * 2. Import ScheduleModule.forRoot() in this module
@@ -37,6 +42,7 @@ import { RecurringPlanSchedulerService } from './services/recurring-plan-schedul
 @Module({
   imports: [
     DatabaseModule,
+    UsersModule,
     // TODO: Add when @nestjs/schedule is installed
     // ScheduleModule.forRoot(),
   ],
