@@ -1,4 +1,5 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import {
   FastifyAdapter,
